@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
-import {finalize} from 'rxjs/operators';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
 
   name: string;
   password: string;
@@ -21,15 +21,21 @@ export class AuthComponent implements OnInit {
 
   authenticatedUserName: string;
 
+  private authSubscription: Subscription;
+
   constructor(private auth: AuthService) { }
 
   ngOnInit(): void {
-    this.auth.authState.subscribe(
+    this.authSubscription = this.auth.authState.subscribe(
       value => {
         this.working = false;
         this.authenticatedUserName = value.name;
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription.unsubscribe();
   }
 
   onSignOnClick(): void { this.action = 'signOn'; }

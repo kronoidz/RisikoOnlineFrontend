@@ -1,0 +1,32 @@
+.no-items {
+  font-family: sans-serif;
+  font-size: .8em;
+}
+
+.error {
+  color: red;
+}
+
+.player-name {
+  font-family: sans-serif;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.status {
+  font-family: monospace;
+  font-size: .75em;
+  font-weight: bold;
+}
+
+.accepted {
+  color: darkgreen;
+}
+
+.declined {
+  color: darkred;
+}
+
+.no-reply {
+  color: darkcyan;
+}
