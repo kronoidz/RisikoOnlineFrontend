@@ -1,0 +1,46 @@
+:host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+form input {
+  margin-bottom: 1em;
+}
+
+.button-row {
+  margin-top: 1em;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.auth-name {
+  color: green;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.status {
+  text-align: center;
+}

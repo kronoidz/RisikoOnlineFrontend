@@ -1,0 +1,38 @@
+<h2>Risiko Online</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <label for="name">Nome</label>
+  <input type="text" id="name" required [(ngModel)]="name" name="name"
+    [disabled]="working">
+
+  <label for="password">Password</label>
+  <input type="password" id="password" required [(ngModel)]="password" name="password"
+    [disabled]="working">
+
+  <div class="button-row">
+    <input type="submit" value="Registrati" (click)="onSignOnClick()" [disabled]="working">
+    <input type="submit" value="Entra" (click)="onSignInClick()" [disabled]="working">
+  </div>
+</form>
+
+<p *ngIf="working && action == 'signIn'">Autenticazione in corso...</p>
+<p *ngIf="working && action == 'signOn'">Creazione nuovo giocatore in corso...</p>
+
+<p *ngIf="error" class="error">{{error}}</p>
+<p *ngIf="success" class="success">{{success}}</p>
+
+<div *ngIf="authenticatedUserName" [hidden]="this.working" class="status">
+
+  <p>
+    Autenticato:
+    <span class="auth-name">
+      {{authenticatedUserName}}
+    </span> &nbsp;
+
+    <span class="nowrap">
+      <a routerLink="/home">Home</a> &nbsp; / &nbsp;
+      <a href="" (click)="onQuitClick($event)">Disconnetti</a>
+    </span>
+  </p>
+
+</div>
