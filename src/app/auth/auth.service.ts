@@ -5,7 +5,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 
 import {AuthState} from './auth-state';
 import {AppConfig} from '../app-config';
-import {ApiErrorService} from '../error/api-error.service';
+import {ApiService} from '../api/api.service';
 
 // noinspection SpellCheckingInspection
 @Injectable({
@@ -18,7 +18,7 @@ export class AuthService {
   private authStateSubject: BehaviorSubject<AuthState>;
   public authState: Observable<AuthState>;
 
-  constructor(private http: HttpClient, private apiError: ApiErrorService) {
+  constructor(private http: HttpClient) {
     const name = localStorage.getItem(this.NAME_KEY);
     const token = localStorage.getItem(this.TOKEN_KEY);
 
@@ -47,7 +47,7 @@ export class AuthService {
       .pipe(
         map(value => new AuthState(name, value.token)),
         tap(next => this.authStateSubject.next(next)),
-        catchError(this.apiError.getApiErrorHandler())
+        ApiService.catchHttpError()
       );
   }
 
@@ -56,7 +56,7 @@ export class AuthService {
       AppConfig.ApiRoot + 'players',
       { name, password }
     )
-    .pipe(catchError(this.apiError.getApiErrorHandler()));
+    .pipe(ApiService.catchHttpError());
   }
 
   unAuthenticate(): void {

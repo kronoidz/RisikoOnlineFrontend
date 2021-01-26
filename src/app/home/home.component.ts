@@ -4,9 +4,8 @@ import {merge, Subscription} from 'rxjs';
 import {catchError, finalize, map, tap} from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
-import { InvitationService } from './invitation.service';
-import {Invitation} from './invitation';
-import {ApiErrorService} from '../error/api-error.service';
+import {Invitation} from '../api/invitation';
+import {ApiService} from '../api/api.service';
 
 
 @Component({
@@ -35,8 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private auth: AuthService,
               private route: ActivatedRoute,
               private router: Router,
-              private invitationService: InvitationService,
-              private apiErrorService: ApiErrorService)
+              private api: ApiService)
   { }
 
   ngOnInit(): void {
@@ -66,7 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const observables = [];
 
     observables.push(
-      this.invitationService.getOutgoing()
+      this.api.getOutgoingInvitations()
         .pipe(
           map(next => {
             const acceptedInvitations = next.filter(i => i.accepted);
@@ -81,7 +79,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
 
     observables.push(
-      this.invitationService.getIncoming()
+      this.api.getIncomingInvitations()
         .pipe(
           map(next => next.sort(
               a => a.accepted === null ? -1 :
@@ -91,11 +89,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         )
     );
 
-    merge(...observables).pipe(
-      finalize(() => this.working = false),
-      catchError(this.apiErrorService.getApiErrorHandler()),
-      catchError(error => this.updateError = error)
-    ).subscribe();
+    merge(...observables)
+      .pipe(
+        finalize(() => this.working = false),
+        catchError(error => this.updateError = error)
+      )
+      .subscribe();
   }
 
   getInvitationClassName(invitation: Invitation): string {
@@ -133,11 +132,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   onInvitePlayer(): void {
     this.sendInvitationError = null;
     this.working = true;
-    this.invitationService.send(this.invitationReceiverName)
+
+    this.api.invite(this.invitationReceiverName)
       .pipe(
         finalize(this.update.bind(this)),
         finalize(() => this.working = false),
-        catchError(this.apiErrorService.getApiErrorHandler()),
         catchError(error => this.sendInvitationError = error)
       )
       .subscribe();
@@ -146,11 +145,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   onAccept(invitation: Invitation): void {
     this.acceptDeclineError = null;
     this.working = true;
-    this.invitationService.accept(invitation)
+
+    this.api.acceptInvitation(invitation)
       .pipe(
         finalize(this.update.bind(this)),
         finalize(() => this.working = false),
-        catchError(this.apiErrorService.getApiErrorHandler()),
         catchError(error => this.acceptDeclineError = error)
       )
       .subscribe();
@@ -159,11 +158,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   onDecline(invitation: Invitation): void {
     this.acceptDeclineError = null;
     this.working = true;
-    this.invitationService.decline(invitation)
+
+    this.api.declineInvitation(invitation)
       .pipe(
         finalize(this.update.bind(this)),
         finalize(() => this.working = false),
-        catchError(this.apiErrorService.getApiErrorHandler()),
         catchError(error => this.acceptDeclineError = error)
       )
       .subscribe();
