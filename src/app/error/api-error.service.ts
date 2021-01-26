@@ -22,7 +22,7 @@ export class ApiErrorService {
     return result;
   }
 
-  apiErrorHandler(apiErrorHandler?: (err: ApiError) => string | undefined | null)
+  getApiErrorHandler(apiErrorHandler?: (err: ApiError) => string | undefined | null)
     : (err: any) => Observable<any>
   {
     return error => {

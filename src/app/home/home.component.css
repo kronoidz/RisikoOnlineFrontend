@@ -1,5 +1,44 @@
+:host {
+  display: block;
+  width: 90vw;
+  max-width: 30em;
+  margin: 0 auto;
+}
+
 .player-name {
   font-family: sans-serif;
   font-weight: bold;
   color: green;
+}
+
+.player-deck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.player-deck * {
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: .25em .3em;
+  margin: .2em;
+}
+
+.player-deck .accepted {
+  color: green;
+  background-color: #D0FFD0;
+}
+
+.player-deck .declined {
+  color: darkgray;
+  background-color: #F0F0F0;
+}
+
+.player-deck .pending {
+  color: darkcyan;
+  background-color: #D0D0FF;
+}
+
+.red {
+  color: red;
 }

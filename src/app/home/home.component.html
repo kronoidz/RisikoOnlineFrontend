@@ -1,5 +1,62 @@
-<h2>Lobby</h2>
+<h2>Lobby <button type="button" (click)="update()" [disabled]="working">Aggiorna dati</button></h2>
 <p>
-  Giocatore: <span class="player-name">{{playerName}}</span>
+  Giocatore: <span class="player-name">{{myName}}</span>
   (<a routerLink="/auth">Autenticazione</a>)
 </p>
+
+<p>
+  <small class="red">{{updateError}}</small>
+</p>
+
+<h3>Nuova partita</h3>
+
+<div class="player-deck">
+  <div class="accepted">
+    <span>{{myName}}</span>
+    <small>Sei tu</small>
+  </div>
+  <div *ngFor="let invitation of outgoingInvitations"
+        [className]="getInvitationClassName(invitation)">
+    <span>{{invitation.receiver}}</span>
+    <small>{{getOutgoingInvitationStatus(invitation)}}</small>
+  </div>
+</div>
+
+<form (ngSubmit)="onInvitePlayer()">
+  <p>
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <input type="text" name="invitationReceiverName" [(ngModel)]="invitationReceiverName"
+      required [disabled]="working" />
+    &nbsp;
+    <input type="submit" value="Invita" [disabled]="working" />
+  </p>
+  <small class="red">{{sendInvitationError}}</small>
+</form>
+
+<p>
+  <button type="button" [disabled]="!canCreateMatch || working" (click)="onCreateMatch()">
+    Crea partita
+  </button>
+  <small [hidden]="canCreateMatch">
+    Necessari almeno 3 giocatori
+  </small>
+</p>
+
+<h3>Inviti ricevuti</h3>
+
+<small class="red">{{acceptDeclineError}}</small>
+
+<div class="player-deck">
+  <div *ngFor="let invitation of incomingInvitations" [className]="getInvitationClassName(invitation)">
+    <span>{{invitation.sender}}</span>
+    <small>{{getIncomingInvitationsStatus(invitation)}}</small>
+    <span *ngIf="invitation.accepted === null">
+      <button type="button" (click)="onAccept(invitation)" [disabled]="working">
+        Accetta
+      </button>
+      <button type="button" (click)="onDecline(invitation)" [disabled]="working">
+        Rifiuta
+      </button>
+    </span>
+  </div>
+</div>

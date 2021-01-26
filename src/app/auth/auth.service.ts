@@ -47,7 +47,7 @@ export class AuthService {
       .pipe(
         map(value => new AuthState(name, value.token)),
         tap(next => this.authStateSubject.next(next)),
-        catchError(this.apiError.apiErrorHandler())
+        catchError(this.apiError.getApiErrorHandler())
       );
   }
 
@@ -56,7 +56,7 @@ export class AuthService {
       AppConfig.ApiRoot + 'players',
       { name, password }
     )
-    .pipe(catchError(this.apiError.apiErrorHandler()));
+    .pipe(catchError(this.apiError.getApiErrorHandler()));
   }
 
   unAuthenticate(): void {
