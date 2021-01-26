@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {BehaviorSubject, Observable, ObservableInput, Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 
-import { AuthState } from './auth-state';
-import { AppConfig } from '../app-config';
+import {AuthState} from './auth-state';
+import {AppConfig} from '../app-config';
+import {ApiErrorService} from '../error/api-error.service';
 
 // noinspection SpellCheckingInspection
 @Injectable({
@@ -17,7 +18,7 @@ export class AuthService {
   private authStateSubject: BehaviorSubject<AuthState>;
   public authState: Observable<AuthState>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private apiError: ApiErrorService) {
     const name = localStorage.getItem(this.NAME_KEY);
     const token = localStorage.getItem(this.TOKEN_KEY);
 
@@ -38,21 +39,6 @@ export class AuthService {
     });
   }
 
-  private static errorHandler(error: HttpErrorResponse): ObservableInput<any> {
-    if (!(error.error instanceof ErrorEvent)) {
-      switch (error.error.status) {
-        case 401:
-        case 422:
-          throw 'Credenziali invalide';
-        case 409:
-          throw 'Un giocatore con quel nome esiste già';
-      }
-    }
-
-    console.error(error);
-    throw 'Errore (vedi console del browser)';
-  }
-
   authenticate(name: string, password: string): Observable<AuthState> {
     return this.http.post<{token: string}> (
       AppConfig.ApiRoot + 'players/auth',
@@ -60,10 +46,8 @@ export class AuthService {
       )
       .pipe(
         map(value => new AuthState(name, value.token)),
-        tap({
-          next: next => this.authStateSubject.next(next),
-          error: AuthService.errorHandler
-        })
+        tap(next => this.authStateSubject.next(next)),
+        catchError(this.apiError.apiErrorHandler())
       );
   }
 
@@ -72,7 +56,7 @@ export class AuthService {
       AppConfig.ApiRoot + 'players',
       { name, password }
     )
-    .pipe(catchError(AuthService.errorHandler));
+    .pipe(catchError(this.apiError.apiErrorHandler()));
   }
 
   unAuthenticate(): void {

@@ -1,27 +1,5 @@
-:host {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-}
-
-h2, h3 {
-  margin: .5em 0;
-}
-
 .player-name {
   font-family: sans-serif;
-  color: green;
   font-weight: bold;
-}
-
-form {
-  margin: 1em 0;
-}
-
-form :not(:first-child) {
-  margin-left: .8em;
-}
-
-.error {
-  color: red;
+  color: green;
 }

@@ -1,24 +1,5 @@
 <h2>Lobby</h2>
-
 <p>
-  Giocatore <span class="player-name">{{playerName}}</span>
-  (<a routerLink="/auth">Gestisci autenticazione</a>)
+  Giocatore: <span class="player-name">{{playerName}}</span>
+  (<a routerLink="/auth">Autenticazione</a>)
 </p>
-
-<h3>Partite in corso <button type="button">Crea partita</button></h3>
-
-<h3>Inviti ricevuti</h3>
-<app-invitation-list type="incoming"></app-invitation-list>
-
-<h3>Inviti inviati</h3>
-
-<form (ngSubmit)="onInvitationSubmit(outgoingList)">
-  <label for="receiver">Nome:</label>
-  <input type="text" id="receiver" name="receiver" [(ngModel)]="invitationReceiver" required
-         [disabled]="working">
-  <input type="submit" value="Manda invito" [disabled]="working">
-</form>
-
-<app-invitation-list type="outgoing" #outgoingList></app-invitation-list>
-
-<p class="error" [hidden]="!errorOccurred">Errore nell'invio dell'invito</p>
