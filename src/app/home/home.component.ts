@@ -6,6 +6,7 @@ import {catchError, finalize, map, tap} from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import {Invitation} from '../api/invitation';
 import {ApiService} from '../api/api.service';
+import {Match} from '../api/match';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   outgoingInvitations: Invitation[];
   incomingInvitations: Invitation[];
+  matches: Match[];
 
   canCreateMatch = false;
   invitationReceiverName: string;
@@ -28,6 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   updateError: string;
   sendInvitationError: string;
   acceptDeclineError: string;
+  matchCreationError: string;
 
   working = false;
 
@@ -89,6 +92,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         )
     );
 
+    observables.push(
+      this.api.getMatches()
+        .pipe(tap(next => this.matches = next))
+    );
+
     merge(...observables)
       .pipe(
         finalize(() => this.working = false),
@@ -126,7 +134,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onCreateMatch(): void {
-    throw 'Not implemented';
+    this.working = true;
+    this.matchCreationError = null;
+
+    this.api.createMatch()
+      .pipe(
+        finalize(this.update.bind(this)),
+        catchError(error => this.matchCreationError = error)
+      )
+      .subscribe();
   }
 
   onInvitePlayer(): void {
@@ -136,7 +152,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.api.invite(this.invitationReceiverName)
       .pipe(
         finalize(this.update.bind(this)),
-        finalize(() => this.working = false),
         catchError(error => this.sendInvitationError = error)
       )
       .subscribe();
@@ -149,7 +164,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.api.acceptInvitation(invitation)
       .pipe(
         finalize(this.update.bind(this)),
-        finalize(() => this.working = false),
         catchError(error => this.acceptDeclineError = error)
       )
       .subscribe();
@@ -162,7 +176,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.api.declineInvitation(invitation)
       .pipe(
         finalize(this.update.bind(this)),
-        finalize(() => this.working = false),
         catchError(error => this.acceptDeclineError = error)
       )
       .subscribe();

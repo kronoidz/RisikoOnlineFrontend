@@ -8,9 +8,28 @@
   <small class="red">{{updateError}}</small>
 </p>
 
+<h3>Partite in corso</h3>
+
+<p>
+  <small [hidden]="matches?.length > 0">[Nessuna partita in corso]</small>
+</p>
+
+<div class="deck">
+  <a class="nounderline" *ngFor="let match of matches" [routerLink]="'/match/' + match.id">
+    <div class="match-card">
+      <p>Partita #{{match.id}}</p>
+      <div class="deck">
+        <span class="accepted" *ngFor="let player of match.players">{{player}}</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<hr>
+
 <h3>Nuova partita</h3>
 
-<div class="player-deck">
+<div class="deck">
   <div class="accepted">
     <span>{{myName}}</span>
     <small>Sei tu</small>
@@ -46,7 +65,11 @@
 
 <small class="red">{{acceptDeclineError}}</small>
 
-<div class="player-deck">
+<small [hidden]="incomingInvitations?.length > 0">
+  [Nessun invito ricevuto]
+</small>
+
+<div class="deck">
   <div *ngFor="let invitation of incomingInvitations" [className]="getInvitationClassName(invitation)">
     <span>{{invitation.sender}}</span>
     <small>{{getIncomingInvitationsStatus(invitation)}}</small>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import {catchError, finalize, tap} from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
 
@@ -69,13 +69,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     observable
       .pipe(finalize(() => this.working = false))
       .subscribe({
-        next: () => {
-          this.success = successMessage;
-        },
-        error: error => {
-          this.error = error;
-          throw error;
-        }});
+        next: () => this.success = successMessage,
+        error: error => this.error = error
+      });
   }
 
   onQuitClick($event: MouseEvent): void {

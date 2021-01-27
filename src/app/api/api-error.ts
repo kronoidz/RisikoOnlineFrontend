@@ -9,6 +9,7 @@ export enum ApiErrorType {
 }
 
 export interface ApiError {
+  isApiError: true;
   type: ApiErrorType;
   description: string;
   details?: string | null;

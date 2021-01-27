@@ -11,34 +11,44 @@
   color: green;
 }
 
-.player-deck {
+.deck {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
 }
 
-.player-deck * {
+.deck * {
   font-family: sans-serif;
   font-weight: bold;
   padding: .25em .3em;
   margin: .2em;
 }
 
-.player-deck .accepted {
+.deck .accepted {
   color: green;
   background-color: #D0FFD0;
 }
 
-.player-deck .declined {
+.deck .declined {
   color: darkgray;
   background-color: #F0F0F0;
 }
 
-.player-deck .pending {
+.deck .pending {
   color: darkcyan;
   background-color: #D0D0FF;
 }
 
 .red {
   color: red;
+}
+
+.match-card {
+  background-color: #D0FFD0;
+  color: black;
+  font-size: .8em;
+}
+
+.nounderline {
+  text-decoration: none;
 }

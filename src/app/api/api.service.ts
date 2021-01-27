@@ -5,6 +5,7 @@ import {ApiError} from './api-error';
 import {Invitation} from './invitation';
 import {AppConfig} from '../app-config';
 import {catchError} from 'rxjs/operators';
+import {Match} from './match';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class ApiService {
 
 
   private static isApiError(error: any): boolean {
-    return (error as ApiError).type !== undefined;
+    return (error as ApiError).isApiError === true;
   }
 
   private static handleHttpError(error: HttpErrorResponse): Observable<never> {
@@ -83,8 +84,18 @@ export class ApiService {
   }
 
 
-  /************ MATCH CREATION **********************/
+  /************ MATCHES **********************/
 
+  getMatches(): Observable<Match[]> {
+    return this.http.get<Match[]>(AppConfig.ApiRoot + 'match')
+      .pipe(ApiService.catchHttpError());
+  }
 
-
+  createMatch(): Observable<Match> {
+    return this.http.post<Match>(
+      AppConfig.ApiRoot + 'match',
+      null
+      )
+      .pipe(ApiService.catchHttpError());
+  }
 }
