@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  width: 90vw;
+  margin: 0 auto;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+}
+
+app-map {
+  margin-top: 2em;
+}

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+svg {
+  width: 100%;
+  height: auto;
+}
+
+.continent {
+  stroke: black;
+  stroke-width: 1px;
+}
+
+#north-america {
+  fill: #8b0000;
+}
+
+#north-america .territory:hover {
+  fill: #c50000;
+}
+
+#south-america {
+  fill: #007878;
+}
+
+#south-america .territory:hover {
+  fill: #00adad;
+}
+
+#europe {
+  fill: #59007f;
+}
+
+#europe .territory:hover {
+  fill: #9a00db;
+}
+
+#asia {
+  fill: #006400;
+}
+
+#asia .territory:hover {
+  fill: #00b400;
+}
+
+#africa {
+  fill: #8b4513;
+}
+
+#africa .territory:hover {
+  fill: #cb641b;
+}
+
+#australia {
+  fill: #72304d;
+}
+
+#australia .territory:hover {
+  fill: #d74887;
+}

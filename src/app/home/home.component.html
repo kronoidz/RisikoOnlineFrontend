@@ -15,7 +15,8 @@
 </p>
 
 <div class="deck">
-  <a class="nounderline" *ngFor="let match of matches" [routerLink]="'/match/' + match.id">
+  <a class="nounderline" *ngFor="let match of matches"
+     [routerLink]="['/match', match.id]">
     <div class="match-card">
       <p>Partita #{{match.id}}</p>
       <div class="deck">
