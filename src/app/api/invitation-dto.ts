@@ -1,4 +1,4 @@
-export interface Invitation {
+export interface InvitationDto {
   id: number;
   sender: string;
   receiver: string;

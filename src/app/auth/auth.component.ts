@@ -26,7 +26,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(private auth: AuthService) { }
 
   ngOnInit(): void {
-    this.authSubscription = this.auth.authState.subscribe(
+    this.authSubscription = this.auth.authStateObservable.subscribe(
       value => {
         this.working = false;
         this.authenticatedUserName = value.name;

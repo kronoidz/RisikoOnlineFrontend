@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  margin: 0 auto;
+  max-width: 50em;
+}
+
+.error {
+  color: red;
+  font-family: sans-serif;
+}
+
+.Red {
+  fill: #8b0000;
+}
+
+.Red.clickable:hover {
+  fill: #c50000;
+}
+
+.Blue {
+  fill: #007878;
+}
+
+.Blue.clickable:hover {
+  fill: #00adad;
+}
+
+.Purple {
+  fill: #59007f;
+}
+
+.Purple.clickable:hover {
+  fill: #9a00db;
+}
+
+.Green {
+  fill: #006400;
+}
+
+.Green.clickable:hover {
+  fill: #00b400;
+}
+
+.Brown {
+  fill: #8b4513;
+}
+
+.Brown.clickable:hover {
+  fill: #cb641b;
+}
+
+.Pink {
+  fill: #72304d;
+}
+
+.Gray {
+  fill: Gray;
+}
+
+.territory-name {
+  margin-left: 1em;
+  font-family: sans-serif;
+  font-weight: bold;
+}

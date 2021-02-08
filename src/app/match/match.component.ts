@@ -8,7 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MatchComponent implements OnInit {
 
-  hoveredTerritory: string;
+  matchStatus = 'Test';
+  selectedTerritory: string;
 
   constructor(private route: ActivatedRoute)
   { }
@@ -19,7 +20,7 @@ export class MatchComponent implements OnInit {
   }
 
   onTerritoryHovered(territory: string) {
-    this.hoveredTerritory = territory;
+    this.selectedTerritory = territory;
   }
 
 }

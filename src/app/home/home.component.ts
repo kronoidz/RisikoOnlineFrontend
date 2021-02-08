@@ -4,9 +4,9 @@ import {merge, Subscription} from 'rxjs';
 import {catchError, finalize, map, tap} from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
-import {Invitation} from '../api/invitation';
 import {ApiService} from '../api/api.service';
-import {Match} from '../api/match';
+import {InvitationDto} from '../api/invitation-dto';
+import {MatchDto} from '../api/match-dto';
 
 
 @Component({
@@ -20,9 +20,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   myName: string;
 
-  outgoingInvitations: Invitation[];
-  incomingInvitations: Invitation[];
-  matches: Match[];
+  outgoingInvitations: InvitationDto[];
+  incomingInvitations: InvitationDto[];
+  matches: MatchDto[];
 
   canCreateMatch = false;
   invitationReceiverName: string;
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   { }
 
   ngOnInit(): void {
-    this.authSubscription = this.auth.authState.subscribe({
+    this.authSubscription = this.auth.authStateObservable.subscribe({
       next: value => {
         if (!value.isValid()) {
           // noinspection JSIgnoredPromiseFromCall
@@ -105,7 +105,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  getInvitationClassName(invitation: Invitation): string {
+  getInvitationClassName(invitation: InvitationDto): string {
     if (invitation.accepted === true)
       return 'accepted';
 
@@ -115,7 +115,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     return 'declined';
   }
 
-  getOutgoingInvitationStatus(invitation: Invitation): string {
+  getOutgoingInvitationStatus(invitation: InvitationDto): string {
     if (invitation.accepted === true)
       return 'Ha accettato';
 
@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     return 'Ha rifiutato';
   }
 
-  getIncomingInvitationsStatus(invitation: Invitation): string | undefined {
+  getIncomingInvitationsStatus(invitation: InvitationDto): string | undefined {
     if (invitation.accepted)
       return 'Hai accettato';
 
@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  onAccept(invitation: Invitation): void {
+  onAccept(invitation: InvitationDto): void {
     this.acceptDeclineError = null;
     this.working = true;
 
@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  onDecline(invitation: Invitation): void {
+  onDecline(invitation: InvitationDto): void {
     this.acceptDeclineError = null;
     this.working = true;
 

@@ -6,6 +6,9 @@ export enum ApiErrorType {
   SelfInvitation,
   InvitationReceiverConflict,
   NotEnoughInvitations,
+  MatchAlreadyInitialized,
+  MatchNotInitialized,
+  InvalidMatchInitializationData,
 }
 
 export interface ApiError {

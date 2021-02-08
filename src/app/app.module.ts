@@ -10,6 +10,8 @@ import { HomeComponent } from './home/home.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { MatchComponent } from './match/match.component';
 import { MapComponent } from './map/map.component';
+import { ReinforcementComponent } from './match/reinforcement/reinforcement.component';
+import { MapLegendComponent } from './match/map-legend/map-legend.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { MapComponent } from './map/map.component';
     HomeComponent,
     MatchComponent,
     MapComponent,
+    ReinforcementComponent,
+    MapLegendComponent,
   ],
   imports: [
       BrowserModule,

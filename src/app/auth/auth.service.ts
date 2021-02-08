@@ -16,7 +16,8 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
 
   private authStateSubject: BehaviorSubject<AuthState>;
-  public authState: Observable<AuthState>;
+  authStateObservable: Observable<AuthState>;
+  get currentAuthState() { return this.authStateSubject.getValue() }
 
   constructor(private http: HttpClient) {
     const name = localStorage.getItem(this.NAME_KEY);
@@ -25,7 +26,7 @@ export class AuthService {
     const initialState = new AuthState(name, token);
 
     this.authStateSubject = new BehaviorSubject<AuthState>(initialState);
-    this.authState = this.authStateSubject.asObservable();
+    this.authStateObservable = this.authStateSubject.asObservable();
 
     this.authStateSubject.subscribe(value => {
       if (value.isValid()) {

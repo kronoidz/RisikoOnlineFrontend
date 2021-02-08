@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+}
+
+span {
+  margin: .7em 0;
+  padding: .25em .5em;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.Red {
+  background-color: #c50000;
+}
+
+.Blue {
+  background-color: #00adad;
+}
+
+.Purple {
+  background-color: #9a00db;
+}
+
+.Green {
+  background-color: #00b400;
+}
+
+.Brown {
+  background-color: #cb641b;
+}
+
+.Pink {
+  background-color: #d74887;
+}
+
+.Gray {
+  background-color: gray;
+}

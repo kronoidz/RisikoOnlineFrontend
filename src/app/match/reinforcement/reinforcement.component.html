@@ -1,0 +1,21 @@
+<!--suppress HtmlFormInputWithoutLabel -->
+<h3>Rinforzo</h3>
+<p>
+  Disponi le armate sui tuoi territori. Armate rimanenti: <b>{{getRemainingArmies()}}</b>
+</p>
+<p *ngIf="getRemainingArmies() === 0">
+  <button type="button" (click)="onSubmitArmies()">Disponi armate</button>
+</p>
+<p class="error">{{error}}</p>
+
+<p *ngIf="selectedOwnership">
+  <input type="number" [(ngModel)]="selectedOwnership.armies" #armies
+    min="1" [max]="armies.valueAsNumber + getRemainingArmies()">
+  <span class="territory-name">{{getSelectedTerritory()}}</span>
+</p>
+
+<app-map-legend
+  [players]="[{name: 'Tu', color: playerColor}, {name: 'Altri giocatori', color: 'Gray'}]">
+</app-map-legend>
+
+<app-map [conf]="mapConf" (territoryClick)="onTerritoryClick($event)"></app-map>

@@ -1,61 +1,69 @@
-:host {
-  display: block;
-}
-
 svg {
   width: 100%;
   height: auto;
 }
 
-.continent {
+.territory {
   stroke: black;
   stroke-width: 1px;
 }
 
-#north-america {
+.selected {
+  stroke-width: 3px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.Red {
   fill: #8b0000;
 }
 
-#north-america .territory:hover {
+.Red.clickable:hover, .Red.selected {
   fill: #c50000;
 }
 
-#south-america {
+.Blue {
   fill: #007878;
 }
 
-#south-america .territory:hover {
+.Blue.clickable:hover, .Blue.selected {
   fill: #00adad;
 }
 
-#europe {
+.Purple {
   fill: #59007f;
 }
 
-#europe .territory:hover {
+.Purple.clickable:hover, .Purple.selected {
   fill: #9a00db;
 }
 
-#asia {
+.Green {
   fill: #006400;
 }
 
-#asia .territory:hover {
+.Green.clickable:hover, .Green.selected {
   fill: #00b400;
 }
 
-#africa {
+.Brown {
   fill: #8b4513;
 }
 
-#africa .territory:hover {
+.Brown.clickable:hover, .Brown.selected {
   fill: #cb641b;
 }
 
-#australia {
+.Pink {
   fill: #72304d;
 }
 
-#australia .territory:hover {
+.Pink.clickable:hover, .Pink.selected {
   fill: #d74887;
+}
+
+.Gray {
+  fill: dimgray;
 }
