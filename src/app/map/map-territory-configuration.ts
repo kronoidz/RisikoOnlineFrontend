@@ -4,4 +4,5 @@ export interface MapTerritoryConfiguration {
   color: MapColor;
   clickable: boolean;
   selected: boolean;
+  text: string;
 }

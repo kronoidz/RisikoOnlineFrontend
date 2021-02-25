@@ -18,6 +18,7 @@ import {TerritoryOwnershipDto} from '../../api/territory-ownership-dto';
 })
 export class ReinforcementComponent implements OnInit {
   mapConf: Map<string, MapTerritoryConfiguration>;
+  working = true;
   error: string;
   ownerships: TerritoryOwnershipDto[];
   playerColor: string;
@@ -70,14 +71,23 @@ export class ReinforcementComponent implements OnInit {
     O.subscribe(
       {
         complete: () => {
+          if (this.unplacedArmies === 0) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([`/match/${matchId}`]);
+          }
+
           this.mapConf =
             this.mapConfService
               .makeInitialReinforcement(
-                this.ownerships.map(o => o.territory),
+                this.ownerships,
                 MapColor[this.playerColor]
               );
+          this.working = false;
         },
-        error: error => this.error = error
+        error: error => {
+          this.error = error;
+          this.working = false;
+        }
       }
     );
   }
@@ -97,7 +107,7 @@ export class ReinforcementComponent implements OnInit {
     this.mapConf =
       this.mapConfService
         .makeInitialReinforcement(
-          this.ownerships.map(o => o.territory),
+          this.ownerships,
           MapColor[this.playerColor],
           this.selectedOwnership?.territory
         );
@@ -108,10 +118,16 @@ export class ReinforcementComponent implements OnInit {
   }
 
   onSubmitArmies() {
+    this.working = true;
+
     this.api.postInitialOwnerships(this.matchId, this.ownerships)
       .subscribe(
         () => this.router.navigate([`/match/${this.matchId}`]),
-        e => this.error = e
+        e => {
+          this.error = e;
+          this.working = false;
+        },
+        () => this.working = false
       );
   }
 }

@@ -64,8 +64,182 @@ data = {
 
 }
 
+
+avgs = {
+ "NorthAfrica": {
+   "x": "422.83212",
+   "y": "395.83304"
+ },
+ "EastAfrica": {
+   "x": "551.26239",
+   "y": "447.16742"
+ },
+ "SouthAfrica": {
+   "x": "499.65417",
+   "y": "577.05505"
+ },
+ "Madagascar": {
+   "x": "598.19403",
+   "y": "579.86035"
+ },
+ "Egypt": {
+   "x": "504.83392",
+   "y": "362.02774"
+ },
+ "Congo": {
+   "x": "495.98004",
+   "y": "489.83304"
+ },
+ "Afghanistan": {
+   "x": "649.22174",
+   "y": "254.72868"
+ },
+ "India": {
+   "x": "694.66742",
+   "y": "365.29465"
+ },
+ "Irkutsk": {
+   "x": "807.36035",
+   "y": "190.44325"
+ },
+ "Kamchatka": {
+   "x": "937.74976",
+   "y": "128.80705"
+ },
+ "MiddleEast": {
+   "x": "585.50043",
+   "y": "379.10968"
+ },
+ "Mongolia": {
+   "x": "837.375",
+   "y": "241"
+ },
+ "Siam": {
+   "x": "773.05597",
+   "y": "375.25021"
+ },
+ "China": {
+   "x": "763.1947",
+   "y": "299.47226"
+ },
+ "Japan": {
+   "x": "914.41583",
+   "y": "250.94405"
+ },
+ "Siberia": {
+   "x": "740.0282",
+   "y": "145.75737"
+ },
+ "Ural": {
+   "x": "674.21545",
+   "y": "174.74709"
+ },
+ "Yakutsk": {
+   "x": "839.13965",
+   "y": "127.4163"
+ },
+ "EasternAustralia": {
+   "x": "883.7453",
+   "y": "557.21857"
+ },
+ "NewGuinea": {
+   "x": "909.36169",
+   "y": "451.56604"
+ },
+ "WesternAustralia": {
+   "x": "790.25153",
+   "y": "557.24976"
+ },
+ "Indonesia": {
+   "x": "820.5",
+   "y": "417.5"
+ },
+ "GreatBritain": {
+   "x": "429.05035",
+   "y": "222.4922"
+ },
+ "Iceland": {
+   "x": "421.38943",
+   "y": "151.36584"
+ },
+ "NorthernEurope": {
+   "x": "480.55594",
+   "y": "224.808"
+ },
+ "Scandinavia": {
+   "x": "501.88943",
+   "y": "115.33348"
+ },
+ "SouthernEurope": {
+   "x": "503.0727996826172",
+   "y": "275"
+ },
+ "Ukraine": {
+   "x": "575.50043",
+   "y": "183.99956"
+ },
+ "WesternEurope": {
+   "x": "423.5564",
+   "y": "287.4436"
+ },
+ "Alaska": {
+   "x": "59.028194",
+   "y": "129.53511"
+ },
+ "Alberta": {
+   "x": "157.80573",
+   "y": "182.22203"
+ },
+ "CentralAmerica": {
+   "x": "199.19383",
+   "y": "314.25021"
+ },
+ "EasternUnitedStates": {
+   "x": "247.08371",
+   "y": "261.33304"
+ },
+ "Greenland": {
+   "x": "392.38898",
+   "y": "82.183739"
+ },
+ "NorthwestTerritory": {
+   "x": "149.57999",
+   "y": "129.17032"
+ },
+ "Ontario": {
+   "x": "232.02864",
+   "y": "192.36148"
+ },
+ "WesternUnitedStates": {
+   "x": "165.34865",
+   "y": "242.83348"
+ },
+ "Quebec": {
+   "x": "308.30618",
+   "y": "190.02776"
+ },
+ "Argentina": {
+   "x": "237.14053",
+   "y": "560.04156"
+ },
+ "Brazil": {
+   "x": "294.01727",
+   "y": "452.7229"
+ },
+ "Peru": {
+   "x": "230.1461",
+   "y": "478.24933"
+ },
+ "Venezuela": {
+   "x": "216.97357",
+   "y": "387.3335"
+ }
+}
+
+
 def S(n):
   return ' ' * n
+
 
 print('<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="700" viewBox="0 0 1024 700">')
 print('\n<!-- Generated with map-template-generator.py -->\n')
@@ -80,6 +254,7 @@ for continent in data:
 
   for territory in territories:
     print(S(6) + f'<path id="{territory}"')
+
     print(S(12) + f'#{territory}')
     print(S(12) +  '[class.territory]="true"')
     print(S(12) + f'[class]="getColor({territory})"')
@@ -87,8 +262,17 @@ for continent in data:
     print(S(12) + f'[class.clickable]="isClickable({territory})"')
     print(S(12) + f'(mouseenter)="onMouseEnter({territory})"')
     print(S(12) + f'(click)="onClick({territory})"')
+
     print(S(12) + f'd="{territories[territory]}"')
-    print(S(12) + '/>\n')
+    print(S(12) + '/>')
+
+    avg = avgs[territory]
+    print(S(6) + f'<text id="text-{territory}"')
+    print(S(12) + 'class="territory-text"')
+    print(S(12) + f'x="{avg["x"]}"')
+    print(S(12) + f'y="{avg["y"]}">')
+    print(S(8) + f'{{{{getText({territory})}}}}') # TOGLIMI
+    print(S(6) + '</text>\n')
 
   print(S(4) + '</g>\n')
 

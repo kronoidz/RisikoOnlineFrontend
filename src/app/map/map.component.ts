@@ -43,4 +43,8 @@ export class MapComponent {
     }
   }
 
+  getText(territory: HTMLElement): string {
+    return this.conf ? this.conf.get(territory.id).text : null;
+  }
+
 }
