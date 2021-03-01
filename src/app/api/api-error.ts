@@ -8,7 +8,7 @@ export enum ApiErrorType {
   NotEnoughInvitations,
   MatchAlreadyInitialized,
   MatchNotInitialized,
-  InvalidMatchInitializationData,
+  InvalidOwnerships,
 }
 
 export interface ApiError {
