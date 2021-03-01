@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AuthService} from '../../auth/auth.service';
-import {ApiService} from '../../api/api.service';
+import {AuthService} from '../../../auth/auth.service';
+import {ApiService} from '../../../api/api.service';
+import {MapLegendItem} from './map-legend-item';
 
 @Component({
   selector: 'app-map-legend',
@@ -9,6 +10,6 @@ import {ApiService} from '../../api/api.service';
 })
 export class MapLegendComponent {
 
-  @Input() players: { name: string, color: string }[];
+  @Input() items: MapLegendItem[];
 
 }

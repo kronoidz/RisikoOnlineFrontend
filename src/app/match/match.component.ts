@@ -9,9 +9,6 @@ import {ApiService} from '../api/api.service';
 })
 export class MatchComponent implements OnInit {
 
-  matchStatus = 'Test';
-  selectedTerritory: string;
-
   constructor(private route: ActivatedRoute,
               private router: Router,
               private api: ApiService)
@@ -21,6 +18,7 @@ export class MatchComponent implements OnInit {
     const routeParams = this.route.snapshot.paramMap;
     const matchId = Number(routeParams.get('matchId'));
 
+    // If playerState is not initialized, go to reinforcement
     this.api.getMyState(matchId)
       .subscribe(
         state => {
@@ -29,11 +27,7 @@ export class MatchComponent implements OnInit {
             this.router.navigate([`match/${matchId}/reinforcement`]);
           }
         }
-      )
-  }
-
-  onTerritoryHovered(territory: string) {
-    this.selectedTerritory = territory;
+      );
   }
 
 }

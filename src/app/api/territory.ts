@@ -47,3 +47,9 @@ export enum Territory {
   NewGuinea,
   WesternAustralia
 }
+
+export function GetAllTerritories(): Territory[] {
+  return Object.keys(Territory)
+    .filter(key => !isNaN(Number(Territory[key])))
+    .map(key => Territory[key]);
+}

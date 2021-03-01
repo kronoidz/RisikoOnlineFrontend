@@ -244,7 +244,7 @@ def S(n):
 print('<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="700" viewBox="0 0 1024 700">')
 print('\n<!-- Generated with map-template-generator.py -->\n')
 
-print(S(2) + '<g id="map" (mouseout)="onMouseOutMap()">\n')
+print(S(2) + '<g id="map">\n')
 
 for continent in data:
   territories = data[continent]
@@ -255,13 +255,14 @@ for continent in data:
   for territory in territories:
     print(S(6) + f'<path id="{territory}"')
 
-    print(S(12) + f'#{territory}')
+    # print(S(12) + f'#{territory}')
     print(S(12) +  '[class.territory]="true"')
-    print(S(12) + f'[class]="getColor({territory})"')
-    print(S(12) + f'[class.selected]="isSelected({territory})"')
-    print(S(12) + f'[class.clickable]="isClickable({territory})"')
-    print(S(12) + f'(mouseenter)="onMouseEnter({territory})"')
-    print(S(12) + f'(click)="onClick({territory})"')
+    print(S(12) + f'[class]="conf.{territory}.getColorString()"')
+    print(S(12) + f'[class.selected]="conf.{territory}.territory === selectedTerritory"')
+    print(S(12) + f'[class.clickable]="conf.{territory}.clickable"')
+    print(S(12) + f'(mouseenter)="onMouseEnter(conf.{territory}.territory)"')
+    print(S(12) + f'(mouseout)="onMouseLeave(conf.{territory}.territory)"')
+    print(S(12) + f'(click)="onClick(conf.{territory}.territory)"')
 
     print(S(12) + f'd="{territories[territory]}"')
     print(S(12) + '/>')
@@ -271,7 +272,7 @@ for continent in data:
     print(S(12) + 'class="territory-text"')
     print(S(12) + f'x="{avg["x"]}"')
     print(S(12) + f'y="{avg["y"]}">')
-    print(S(8) + f'{{{{getText({territory})}}}}') # TOGLIMI
+    print(S(8) + f'{{{{conf.{territory}.text}}}}') # TOGLIMI
     print(S(6) + '</text>\n')
 
   print(S(4) + '</g>\n')

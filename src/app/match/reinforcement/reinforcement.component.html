@@ -1,27 +1,36 @@
 <!--suppress HtmlFormInputWithoutLabel -->
-<h3>Rinforzo</h3>
-<p>
-  Disponi le armate sui tuoi territori. Armate rimanenti: <b>{{getRemainingArmies()}}</b>
+<!--
+<h3>Fase di rinforzo</h3>
+
+<p *ngIf="working else instructions">
+  Caricamento dei dati...
 </p>
+
+<ng-template #instructions>
+  <p>Disponi le armate sui tuoi territori. Armate rimanenti: <b>{{remainingArmies}}</b></p>
+</ng-template>
 
 <p class="error">{{error}}</p>
 
-<p *ngIf="selectedOwnership">
+<p *ngIf="!working && selectedOwnership">
   <input type="number" [(ngModel)]="selectedOwnership.armies" #armies
-    min="1" [max]="armies.valueAsNumber + getRemainingArmies()" [disabled]="working">
+         [min]="selectedTerritoryMinArmies"
+         [max]="armies.valueAsNumber + remainingArmies">
 
-  <span class="territory-name">{{getSelectedTerritory()}}</span>
+  <span class="territory-name">{{selectedTerritoryName}}</span>
 
   &nbsp;
 
   <button type="button" (click)="onSubmitArmies()"
-          [disabled]="working || getRemainingArmies() > 0">
+          [disabled]="working || remainingArmies > 0">
     Fatto
   </button>
 </p>
 
-<app-map-legend
-  [players]="[{name: 'Tu', color: playerColor}, {name: 'Altri giocatori', color: 'Gray'}]">
-</app-map-legend>
+<app-map-legend [items]="legendItems"></app-map-legend>
 
-<app-map [conf]="working ? null : mapConf" (territoryClick)="onTerritoryClick($event)"></app-map>
+<app-map [conf]="mapConfiguration"
+         (territorySelected)="onTerritorySelected($event)"
+         (territoryDeselected)="onTerritoryDeselected($event)">
+</app-map>
+-->

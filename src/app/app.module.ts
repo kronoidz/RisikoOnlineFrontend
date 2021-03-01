@@ -9,9 +9,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { MatchComponent } from './match/match.component';
-import { MapComponent } from './map/map.component';
+import { MapComponent } from './match/map/map.component';
 import { ReinforcementComponent } from './match/reinforcement/reinforcement.component';
-import { MapLegendComponent } from './match/map-legend/map-legend.component';
+import { MapLegendComponent } from './match/map/map-legend/map-legend.component';
+import { MapTestComponent } from './match/map/map-test.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MapLegendComponent } from './match/map-legend/map-legend.component';
     MapComponent,
     ReinforcementComponent,
     MapLegendComponent,
+    MapTestComponent,
   ],
   imports: [
       BrowserModule,
