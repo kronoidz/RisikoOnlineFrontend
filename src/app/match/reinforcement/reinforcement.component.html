@@ -1,36 +1,40 @@
 <!--suppress HtmlFormInputWithoutLabel -->
-<!--
 <h3>Fase di rinforzo</h3>
 
-<p *ngIf="working else instructions">
-  Caricamento dei dati...
-</p>
+<a [href]="'match/' + matchId">Torna alla partita</a>
 
-<ng-template #instructions>
-  <p>Disponi le armate sui tuoi territori. Armate rimanenti: <b>{{remainingArmies}}</b></p>
-</ng-template>
+<p *ngIf="working">Caricamento in corso...</p>
 
-<p class="error">{{error}}</p>
+<p *ngIf="!working">Disponi le armate sui tuoi territori.</p>
 
-<p *ngIf="!working && selectedOwnership">
-  <input type="number" [(ngModel)]="selectedOwnership.armies" #armies
-         [min]="selectedTerritoryMinArmies"
-         [max]="armies.valueAsNumber + remainingArmies">
-
-  <span class="territory-name">{{selectedTerritoryName}}</span>
-
-  &nbsp;
-
-  <button type="button" (click)="onSubmitArmies()"
-          [disabled]="working || remainingArmies > 0">
+<p *ngIf="!working">
+  Armate rimanenti: <code><b>{{remainingArmies}}</b>/{{state.unplacedArmies}}</code>
+  <button type="button"
+          (click)="onDone()"
+          [disabled]="remainingArmies > 0 || state.unplacedArmies === 0">
     Fatto
   </button>
 </p>
 
-<app-map-legend [items]="legendItems"></app-map-legend>
+<p class="error">{{error}}</p>
 
-<app-map [conf]="mapConfiguration"
-         (territorySelected)="onTerritorySelected($event)"
-         (territoryDeselected)="onTerritoryDeselected($event)">
+<form *ngIf="!working && this.selectedTerritoryName">
+
+  <input type="number"
+         name="armies"
+         (input)="onArmyNumberChange()"
+         (keydown)="$event.preventDefault()"
+         [(ngModel)]="selectedOwnershipUpdated.armies"
+         [min]="selectedOwnershipOriginal.armies || 1"
+         [max]="selectedOwnershipUpdated.armies + remainingArmies"
+         [disabled]="!this.selectedTerritoryName">
+
+  <span class="territory-name">{{selectedTerritoryName}}</span>
+</form>
+
+<app-map [conf]="mapConf"
+         [selectable]="true"
+         (onTerritorySelected)="onTerritorySelected($event)"
+         (onTerritoryDeselected)="onTerritoryDeselected()"
+         *ngIf="!working">
 </app-map>
--->

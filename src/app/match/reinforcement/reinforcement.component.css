@@ -14,3 +14,11 @@
   font-family: sans-serif;
   font-weight: bold;
 }
+
+form *:not(:first-child) {
+  margin-left: 1em;
+}
+
+button {
+  margin-left: 1em;
+}

@@ -1,146 +1,131 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { tap } from 'rxjs/operators';
+import { concat, iif, merge } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
-import {Territory} from '../../api/territory';
-import {ApiService} from '../../api/api.service';
-import {AuthService} from '../../auth/auth.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {catchError, tap} from 'rxjs/operators';
-import {MapColor} from '../map/conf/map-color';
-import {concat, iif, merge} from 'rxjs';
-import {TerritoryOwnershipDto} from '../../api/territory-ownership-dto';
-import {MapConfiguration} from '../map/conf/map-configuration';
-import {MapLegendItem} from '../map/map-legend/map-legend-item';
-import {MatchDto} from '../../api/match-dto';
-import {PlayerStateDto} from '../../api/player-state-dto';
+import { PlayerStateDto } from '../../api/player-state-dto';
+import { TerritoryOwnershipDto } from '../../api/territory-ownership-dto';
+import { Territory } from '../../api/territory';
+import { MapConfiguration } from '../map/conf/map-configuration';
+import { ApiService } from '../../api/api.service';
+import { MatchDto } from '../../api/match-dto';
 
 @Component({
   selector: 'app-reinforcement',
   templateUrl: './reinforcement.component.html',
   styleUrls: ['./reinforcement.component.css']
 })
-export class ReinforcementComponent /*implements OnInit*/ {
-  /*
-  mapConfiguration = new MapConfiguration();
-  legendItems: MapLegendItem[] = [];
-  playerColor: string;
+export class ReinforcementComponent implements OnInit {
   working = true;
   error: string;
-  selectedOwnership: TerritoryOwnershipDto;
 
-  get remainingArmies() {
-    return this.playerState.unplacedArmies - this.placedArmies;
-  }
+  mapConf = new MapConfiguration();
 
-  get selectedTerritoryName() {
-    return Territory[this.selectedOwnership.territory];
-  }
+  selectedOwnershipUpdated: TerritoryOwnershipDto;
+  selectedOwnershipOriginal: TerritoryOwnershipDto;
+  selectedTerritoryName: string;
 
-  get selectedTerritoryMinArmies() {
-    const prevArmies = this.previousOwnerships
-      .find(o => o.territory === this.selectedOwnership.territory)
-      .armies;
-    return prevArmies === 0 ? 1 : prevArmies;
-  }
-
-  private myName: string;
-  private match: MatchDto;
-  private playerState: PlayerStateDto;
-  private previousOwnerships: TerritoryOwnershipDto[];
-  private ownerships: TerritoryOwnershipDto[];
-
-  private get placedArmies() {
-    let placedArmies = 0;
-    for (let i = 0; i < this.ownerships.length; i++) {
-      placedArmies += this.ownerships[i].armies - this.previousOwnerships[i].armies;
-    }
-    return placedArmies;
-  }
+  remainingArmies: number;
+  match: MatchDto;
+  matchId: number;
+  state: PlayerStateDto;
+  originalOwnerships: TerritoryOwnershipDto[];
+  updatedOwnerships: TerritoryOwnershipDto[];
 
   constructor(private route: ActivatedRoute,
-              private router: Router,
-              private auth: AuthService,
               private api: ApiService)
-  { }
+  {}
 
   ngOnInit(): void {
-    this.myName = this.auth.currentAuthState.name;
-    const routeParams = this.route.snapshot.paramMap;
-    const matchId = Number(routeParams.get('matchId'));
+    const matchId = +this.route.snapshot.paramMap.get('matchId');
+    this.matchId = matchId;
 
-    // Get player state
-    const playerStateObservable = this.api.getMyState(matchId)
-      .pipe(tap(next => {
-        this.playerState = next;
+    const stateObservable = this.api.getMyState(matchId)
+      .pipe(tap({
+        next: next => this.state = next
       }));
 
-    // If initialized, get all ownerships. Otherwise, just mine
-    const ownershipsObservable = iif(
-      () => this.playerState.isInitialized,
-      this.api.getMatchOwnerships(matchId),
-      this.api.getMyOwnerships(matchId)
-    )
-      .pipe(tap(next => {
-        this.previousOwnerships = next;
-        this.ownerships = next.map(v => Object.assign({}, v)); // Shallow copy
+    const matchObservable = this.api.getMatch(matchId)
+      .pipe(
+        tap({ next: next => this.match = next })
+      );
 
-        let i = 0;
-        for (const ownership of next) {
-
-          // Place 1 army in all territories automatically
-          if (!this.playerState.isInitialized) {
-            ownership.armies = 1;
-          }
-
-          // Configure map
-          const territoryConf = this.mapConfiguration.getTerritoryConfiguration(ownership.territory);
-          territoryConf.color = this.match.players.indexOf(ownership.player) as MapColor;
-          territoryConf.selectable = ownership.player === this.myName;
-          territoryConf.clickable = territoryConf.selectable;
-          territoryConf.text = ownership.armies.toString();
-
-          // Configure legend
-          if (i === 0 || next[i - 1].player !== ownership.player)
-            this.legendItems.push({ color: territoryConf.color, text: ownership.player })
-
-          i++;
+    const ownershipsObservable =
+      iif(() => !!this.match.currentPlayer,
+        this.api.getMatchOwnerships(matchId),
+        this.api.getMyOwnerships(matchId)
+      )
+      .pipe(tap({
+        next: next => {
+          this.originalOwnerships = next;
+          this.updatedOwnerships = next.map(o => {
+            const clone = Object.assign({}, o);
+            if (clone.armies === 0)
+              clone.armies = 1;
+            return clone;
+          });
         }
       }));
 
-    const stateOwnershipsObservable = concat(playerStateObservable, ownershipsObservable);
-
-    // Get match
-    const matchObservable = this.api.getMatch(matchId)
-      .pipe(tap(next => this.match = next));
-
-    merge(stateOwnershipsObservable, matchObservable)
-      .pipe(catchError(err => this.error = err))
+    concat(merge(stateObservable, matchObservable), ownershipsObservable)
       .subscribe({
-        complete: () => this.working = false
+        error: error => this.error = error,
+        complete: () => {
+          this.working = false;
+          this.initMapConf();
+          this.updateRemainingArmies();
+        }
       });
   }
 
-  onSubmitArmies() {
+  onDone(): void {
     this.working = true;
-
-    this.api.postInitialOwnerships(this.match.id, this.ownerships)
-      .pipe(catchError(err => this.error = err))
-        .subscribe({
-          complete: () => this.working = false
-        });
+    this.api.postOwnerships(this.match.id, this.updatedOwnerships)
+      .subscribe({
+        complete: () => this.working = false,
+        error: e => this.error = e
+      });
   }
 
   onTerritorySelected(territory: Territory): void {
-    this.selectedOwnership = this.ownerships.find(o => o.territory === territory);
-    this.mapConfiguration.setText(territory, '?');
+    this.selectedOwnershipUpdated = this.updatedOwnerships.find(o => o.territory === territory);
+    this.selectedOwnershipOriginal = this.originalOwnerships.find(o => o.territory === territory);
+    this.selectedTerritoryName = Territory[territory];
   }
 
-  onTerritoryDeselected(territory: Territory): void {
-    this.mapConfiguration.setText(
-      this.selectedOwnership.territory,
-      this.selectedOwnership.armies.toString()
+  onTerritoryDeselected(): void {
+    this.selectedOwnershipUpdated = null;
+    this.selectedOwnershipOriginal = null;
+    this.selectedTerritoryName = null;
+  }
+
+  private initMapConf(): void {
+    for (const ownership of this.updatedOwnerships) {
+      if (ownership.player === this.state.player) {
+        const conf = this.mapConf.get(ownership.territory);
+        conf.color = this.match.players.indexOf(this.state.player);
+        conf.clickable = true;
+        conf.text = ownership.armies.toString();
+      }
+    }
+  }
+
+  onArmyNumberChange(): void {
+    this.updateRemainingArmies();
+    this.updateSelectedTerritoryText();
+  }
+
+  updateRemainingArmies(): void {
+    this.remainingArmies = this.updatedOwnerships.reduce(
+      (accumulator, updatedOwnership, i) => {
+        const originalOwnership = this.originalOwnerships[i];
+        return accumulator - (updatedOwnership.armies - originalOwnership.armies);
+      }, this.state.unplacedArmies
     );
-    this.selectedOwnership = null;
   }
 
-   */
+  updateSelectedTerritoryText(): void {
+    this.mapConf.get(this.selectedOwnershipUpdated.territory)
+          .text = this.selectedOwnershipUpdated.armies.toString();
+  }
 }

@@ -131,7 +131,7 @@ export class ApiService {
       .pipe(ApiService.catchHttpError());
   }
 
-  postInitialOwnerships(match: number, owns: TerritoryOwnershipDto[]): Observable<any> {
+  postOwnerships(match: number, owns: TerritoryOwnershipDto[]): Observable<any> {
     return this.http.post(AppConfig.ApiRoot + `states/${match}/ownerships`, owns)
       .pipe(ApiService.catchHttpError());
   }
