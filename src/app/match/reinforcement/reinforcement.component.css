@@ -15,10 +15,30 @@
   font-weight: bold;
 }
 
+.form {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 form *:not(:first-child) {
   margin-left: 1em;
 }
 
 button {
   margin-left: 1em;
+}
+
+h3 {
+  margin: .5em 0;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.header button {
+  padding: .3em 1.3em;
 }

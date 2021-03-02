@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { concat, iif, merge } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {tap} from 'rxjs/operators';
+import {concat, iif, merge} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
 
-import { PlayerStateDto } from '../../api/player-state-dto';
-import { TerritoryOwnershipDto } from '../../api/territory-ownership-dto';
-import { Territory } from '../../api/territory';
-import { MapConfiguration } from '../map/conf/map-configuration';
-import { ApiService } from '../../api/api.service';
-import { MatchDto } from '../../api/match-dto';
+import {PlayerStateDto} from '../../api/player-state-dto';
+import {TerritoryOwnershipDto} from '../../api/territory-ownership-dto';
+import {Territory} from '../../api/territory';
+import {MapConfiguration} from '../map/conf/map-configuration';
+import {ApiService} from '../../api/api.service';
+import {MatchDto} from '../../api/match-dto';
+import {MissionObjective} from '../../api/mission-objective';
 
 @Component({
   selector: 'app-reinforcement',
@@ -29,6 +30,7 @@ export class ReinforcementComponent implements OnInit {
   match: MatchDto;
   matchId: number;
   state: PlayerStateDto;
+  mission: string;
   originalOwnerships: TerritoryOwnershipDto[];
   updatedOwnerships: TerritoryOwnershipDto[];
 
@@ -37,43 +39,54 @@ export class ReinforcementComponent implements OnInit {
   {}
 
   ngOnInit(): void {
-    const matchId = +this.route.snapshot.paramMap.get('matchId');
-    this.matchId = matchId;
+    this.matchId = +this.route.snapshot.paramMap.get('matchId');
+    this.loadData();
+  }
 
-    const stateObservable = this.api.getMyState(matchId)
+  loadData(): void {
+    this.working = true;
+
+    const stateObservable = this.api.getMyState(this.matchId)
       .pipe(tap({
-        next: next => this.state = next
+        next: next => {
+          this.state = next;
+
+          if (next.missionObjective === MissionObjective.Capture24)
+            this.mission = 'Conquista 24 territori';
+          else
+            this.mission = `Distruggi il giocatore ${next.targetPlayer}`
+        }
       }));
 
-    const matchObservable = this.api.getMatch(matchId)
+    const matchObservable = this.api.getMatch(this.matchId)
       .pipe(
         tap({ next: next => this.match = next })
       );
 
     const ownershipsObservable =
       iif(() => !!this.match.currentPlayer,
-        this.api.getMatchOwnerships(matchId),
-        this.api.getMyOwnerships(matchId)
+        this.api.getMatchOwnerships(this.matchId),
+        this.api.getMyOwnerships(this.matchId)
       )
-      .pipe(tap({
-        next: next => {
-          this.originalOwnerships = next;
-          this.updatedOwnerships = next.map(o => {
-            const clone = Object.assign({}, o);
-            if (clone.armies === 0)
-              clone.armies = 1;
-            return clone;
-          });
-        }
-      }));
+        .pipe(tap({
+          next: next => {
+            this.originalOwnerships = next;
+            this.updatedOwnerships = next.map(o => {
+              const clone = Object.assign({}, o);
+              if (clone.armies === 0)
+                clone.armies = 1;
+              return clone;
+            });
+          }
+        }));
 
     concat(merge(stateObservable, matchObservable), ownershipsObservable)
       .subscribe({
         error: error => this.error = error,
         complete: () => {
-          this.working = false;
           this.initMapConf();
           this.updateRemainingArmies();
+          this.working = false;
         }
       });
   }
@@ -82,7 +95,14 @@ export class ReinforcementComponent implements OnInit {
     this.working = true;
     this.api.postOwnerships(this.match.id, this.updatedOwnerships)
       .subscribe({
-        complete: () => this.working = false,
+        complete: () => {
+          this.selectedOwnershipUpdated = null;
+          this.selectedTerritoryName = null;
+          this.selectedOwnershipOriginal = null;
+          this.remainingArmies = null;
+
+          this.loadData();
+        },
         error: e => this.error = e
       });
   }
@@ -101,9 +121,10 @@ export class ReinforcementComponent implements OnInit {
 
   private initMapConf(): void {
     for (const ownership of this.updatedOwnerships) {
+      const conf = this.mapConf.get(ownership.territory);
+      conf.color = this.match.players.indexOf(ownership.player);
+
       if (ownership.player === this.state.player) {
-        const conf = this.mapConf.get(ownership.territory);
-        conf.color = this.match.players.indexOf(this.state.player);
         conf.clickable = true;
         conf.text = ownership.armies.toString();
       }

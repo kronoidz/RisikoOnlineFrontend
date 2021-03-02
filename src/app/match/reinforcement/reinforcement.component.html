@@ -1,36 +1,37 @@
 <!--suppress HtmlFormInputWithoutLabel -->
-<h3>Fase di rinforzo</h3>
 
-<a [href]="'match/' + matchId">Torna alla partita</a>
-
-<p *ngIf="working">Caricamento in corso...</p>
-
-<p *ngIf="!working">Disponi le armate sui tuoi territori.</p>
-
-<p *ngIf="!working">
-  Armate rimanenti: <code><b>{{remainingArmies}}</b>/{{state.unplacedArmies}}</code>
+<div class="header">
+  <h3>Fase di rinforzo</h3>
   <button type="button"
           (click)="onDone()"
           [disabled]="remainingArmies > 0 || state.unplacedArmies === 0">
     Fatto
   </button>
-</p>
+  <a [href]="'match/' + matchId">< Partita</a>
+</div>
 
 <p class="error">{{error}}</p>
 
-<form *ngIf="!working && this.selectedTerritoryName">
+<p *ngIf="working">Caricamento in corso...</p>
 
-  <input type="number"
-         name="armies"
-         (input)="onArmyNumberChange()"
-         (keydown)="$event.preventDefault()"
-         [(ngModel)]="selectedOwnershipUpdated.armies"
-         [min]="selectedOwnershipOriginal.armies || 1"
-         [max]="selectedOwnershipUpdated.armies + remainingArmies"
-         [disabled]="!this.selectedTerritoryName">
+<div *ngIf="!working" class="form">
+  <small>Missione: {{mission}}</small>
+  <p>Armate rimanenti: <code><b>{{remainingArmies}}</b>/{{state.unplacedArmies}}</code></p>
 
-  <span class="territory-name">{{selectedTerritoryName}}</span>
-</form>
+  <form *ngIf="this.selectedTerritoryName">
+
+    <input type="number"
+           name="armies"
+           (input)="onArmyNumberChange()"
+           (keydown)="$event.preventDefault()"
+           [(ngModel)]="selectedOwnershipUpdated.armies"
+           [min]="selectedOwnershipOriginal.armies || 1"
+           [max]="selectedOwnershipUpdated.armies + remainingArmies"
+           [disabled]="!this.selectedTerritoryName">
+
+    <span class="territory-name">{{selectedTerritoryName}}</span>
+  </form>
+</div>
 
 <app-map [conf]="mapConf"
          [selectable]="true"
